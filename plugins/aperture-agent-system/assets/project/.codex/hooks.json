@@ -1,0 +1,18 @@
+{
+  "description": "Optional subagent routing guard; controlled by .codex/delegation-guard.json.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^(spawn_agent|Agent|collaborationspawn_agent)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/.agents/system/hooks/delegation_guard.py\"",
+            "timeout": 3,
+            "statusMessage": "Checking subagent routing"
+          }
+        ]
+      }
+    ]
+  }
+}

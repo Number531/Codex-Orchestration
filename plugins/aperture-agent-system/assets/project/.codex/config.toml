@@ -1,0 +1,33 @@
+[features]
+multi_agent = true
+multi_agent_v2 = true
+
+[agents]
+max_threads = 6
+max_depth = 1
+default_subagent_model = "gpt-5.6-luna"
+default_subagent_reasoning_effort = "max"
+
+[agents.default]
+description = "General read-only delegate for dynamically assigned tasks."
+config_file = "agents/default.toml"
+
+[agents.explorer]
+description = "Read-only repository evidence gathering and source discovery."
+config_file = "agents/explorer.toml"
+
+[agents.worker]
+description = "General execution delegate for dynamically assigned bounded tasks."
+config_file = "agents/worker.toml"
+
+[agents.implementer]
+description = "Implementation of approved, phase-bounded scopes and validation."
+config_file = "agents/implementer.toml"
+
+[agents.auditor]
+description = "Independent adversarial review of correctness, safety and workflow scope."
+config_file = "agents/auditor.toml"
+
+[agents.verifier]
+description = "Independent verification of the approved outcome and executable evidence."
+config_file = "agents/verifier.toml"

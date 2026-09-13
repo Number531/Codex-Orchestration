@@ -1,0 +1,28 @@
+{
+  "name": "aperture-agent-system",
+  "version": "0.1.0",
+  "description": "Team delegation, focused delivery and explicit Codex project setup with an optional model guard.",
+  "author": {
+    "name": "Aperture"
+  },
+  "repository": "https://github.com/Number531/Codex-Orchestration",
+  "keywords": [
+    "codex",
+    "agents",
+    "delegation",
+    "aperture"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Aperture-Agent-System",
+    "shortDescription": "Cost-aware delegation and focused delivery for Codex.",
+    "longDescription": "Portable team skills with explicit project setup for pinned agents and an optional delegation guard.",
+    "developerName": "Aperture",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": "Set up Aperture-Agent-System in this project with a reviewed preview."
+  }
+}
