@@ -23,5 +23,7 @@ jobs:
         run: python3 -B -m unittest discover -s plugins/codex-orchestration/test -p 'test_*.py'
       - name: Check standalone catalog
         run: python3 -B plugins/codex-orchestration/test/check_catalog.py
+      - name: Check documentation
+        run: python3 -B plugins/codex-orchestration/test/check_docs.py
       - name: Check whitespace
         run: git show --format= --check HEAD

@@ -1,6 +1,6 @@
 # Codex-Orchestration
 
-**Version 0.2.0 · Plugin ID `codex-orchestration` · Guard off by default**
+**Version 0.2.1 · Plugin ID `codex-orchestration` · Guard off by default**
 
 A small Codex plugin for delegating dynamic tasks through named, model-pinned specialists. It provides three skills, six agent profiles, project guidance, a preview-first installer, and an optional synchronous spawn guard.
 
@@ -8,7 +8,7 @@ For example, a parent can assign repository discovery to `explorer`, implementat
 
 ## Requirements
 
-- Python 3.11+ and Git on the machine where project setup and hooks run. Runtime scripts use the standard library; no Python dependency installation is required.
+- Python 3.11+ and Git in a Unix environment with `fcntl` and a compatible shell. macOS is the qualified platform. Native Windows Python cannot run this installer; Linux and WSL require their own client validation. Runtime scripts use the standard library; no Python dependency installation is required.
 - An existing Git project and permission to review and change its project configuration.
 - A compatible Codex client supporting multi-agent V2, the `fork_turns` spawn field, named profiles and synchronous `PreToolUse` denial. The tested engines were CLI `0.154.0` and Desktop bundled engine `0.154.0-alpha.6.2` on macOS. Other versions require validation.
 - Access to the configured models through the account/provider used by that client. The bundled Luna/Terra/Sol pins do not grant model access or guarantee prices. Check the [role table and customization guide](docs/configuration.md#bundled-roles) before setup.
@@ -17,7 +17,7 @@ The `fork_turns` field and the `collaborationspawn_agent` hook name are compatib
 
 ## Install the skills
 
-The standalone repository is [Number531/Codex-Orchestration](https://github.com/Number531/Codex-Orchestration), initially private. Its catalog is `.agents/plugins/marketplace.json`; the marketplace name is `codex-orchestration`.
+The standalone repository is [Number531/Codex-Orchestration](https://github.com/Number531/Codex-Orchestration), publicly readable. Its catalog is `.agents/plugins/marketplace.json`; the marketplace name is `codex-orchestration`.
 
 ```sh
 codex plugin marketplace add https://github.com/Number531/Codex-Orchestration.git
@@ -25,31 +25,53 @@ codex plugin list --available --json --marketplace codex-orchestration
 codex plugin add codex-orchestration@codex-orchestration
 ```
 
-Private access requires your GitHub credentials. Use the SSH equivalent if that is how you authenticate. In a new Codex session, select the installed `orchestration-setup` skill for your target project. Installation alone does **not** register project agents, trust hooks, or enable the guard.
+No repository invitation is required for HTTPS access. Use the SSH equivalent if that is how you authenticate. Plugin installation makes the skills available; project setup is a separate step. Review the repository's [licensing status](../../README.md#licensing-status) before adoption.
 
-Alternatively, clone a reviewed checkout and use its setup script directly. This installs the project assets without registering plugin skills:
+## Set up one project
+
+Choose one of the following routes. Both target one existing Git worktree and leave the delegation guard off.
+
+### Installed-plugin route
+
+1. Open your target Git project in a new Codex session after installing the plugin.
+2. Select `orchestration-setup` from the skill picker and ask: “Preview Codex Orchestration setup for this project. Leave enforcement off.” The skill locates its own installed package; no shell variable or second clone is needed.
+3. Review the planned files and any conflicts. If the preview is correct, ask the skill to apply it to that project. Do not force an overwrite.
+4. Continue with [review and trust](#review-and-trust).
+
+### Checkout route
+
+Use this route when you want project configuration without registering the plugin skills. Clone a reviewed checkout, then replace `/absolute/path/to/project` with the existing Git worktree root you want to configure:
 
 ```sh
 git clone https://github.com/Number531/Codex-Orchestration.git
 cd Codex-Orchestration
 ORCHESTRATION_PACKAGE="$PWD/plugins/codex-orchestration"
+ORCHESTRATION_PROJECT="/absolute/path/to/project"
+python3 "$ORCHESTRATION_PACKAGE/scripts/setup.py" --project "$ORCHESTRATION_PROJECT"
 ```
 
-## Set up one project
-
-Use the absolute root of the target Git worktree, not a subdirectory. A separate disposable Git project is a useful first trial.
+The default is a read-only preview. It prints the planned paths or `Preview: no changes.` Review the source assets and existing project configuration before applying. In the same shell:
 
 ```sh
-python3 "$ORCHESTRATION_PACKAGE/scripts/setup.py" --project /absolute/path/to/project
+python3 "$ORCHESTRATION_PACKAGE/scripts/setup.py" --project "$ORCHESTRATION_PROJECT" --apply
 ```
 
-The default is a read-only preview. It prints the planned paths or `Preview: no changes.` Review the source assets and the target project's existing configuration before applying the plan:
+A separate disposable Git project is a useful first trial; the [validation guide](docs/validation.md#try-the-documented-setup-safely) gives complete commands.
+
+### Review and trust
+
+Review the resulting project diff before using the installed configuration. Two separate trust decisions matter:
+
+1. Open Codex in the target project and complete its project-trust prompt after reviewing the project. Project `.codex` settings and hooks load only from a trusted project.
+2. In the CLI, open `/hooks`, locate the project hook from `.codex/hooks.json`, and review its command and current definition before trusting it. New or changed non-managed hooks require review again. This trust decision does not turn on delegation enforcement.
+
+Start a fresh session after profile/config changes. Check the flag from the configured project:
 
 ```sh
-python3 "$ORCHESTRATION_PACKAGE/scripts/setup.py" --project /absolute/path/to/project --apply
+python3 /absolute/path/to/project/.agents/system/hooks/delegation_guard.py --status
 ```
 
-Review the resulting project diff, complete the client's normal project/hook trust flow, and start a fresh session. Setup does not grant that trust. If you installed through the plugin manager, `orchestration-setup` resolves its package location; the shell variable above is only for the checkout route.
+A new setup should print `Delegation guard: off`. OpenAI documents the [hook review flow](https://learn.chatgpt.com/docs/hooks); Desktop UI qualification is recorded separately in the [compatibility guide](docs/validation.md). Setup never grants trust automatically.
 
 New installations leave the guard off. Reruns preserve valid existing flag and model-policy values. A setup conflict stops the operation; use [operations and recovery](docs/operations.md) rather than forcing an overwrite.
 
@@ -57,11 +79,18 @@ Upgrading from `0.1.0` changes the plugin/skill identifiers and managed guidance
 
 ## Turn enforcement on or off
 
-In the configured project, after reviewing and authorizing the policy:
+Leave enforcement off during ordinary onboarding. Enable it only when a demonstrated delegation-policy issue calls for enforcement and the user authorizes the policy. Turning it on does not fix installation, interpreter, or trust errors.
+
+To enable enforcement in the configured project:
 
 ```sh
 python3 /absolute/path/to/project/.agents/system/hooks/delegation_guard.py --on
 python3 /absolute/path/to/project/.agents/system/hooks/delegation_guard.py --status
+```
+
+To disable it:
+
+```sh
 python3 /absolute/path/to/project/.agents/system/hooks/delegation_guard.py --off
 ```
 
@@ -84,4 +113,4 @@ These skills do not authorize spending, remote writes, merges, or policy changes
 - [Validation and compatibility](docs/validation.md): reproducible checks, evidence and unverified surfaces.
 - [Changelog](CHANGELOG.md), [contribution guidance](../../CONTRIBUTING.md), and [security policy](../../SECURITY.md).
 
-The package has no declared distribution license yet. Keeping the repository private does not settle the licensing decision for a future public release.
+The repository is public, but a distribution license has not yet been adopted. See [licensing status](../../README.md#licensing-status) for the current position.
