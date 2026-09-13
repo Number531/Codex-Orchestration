@@ -30,7 +30,7 @@ Users can add `--ref <release-tag>` to the documented marketplace-add command to
 
 Maintain pull-request-only changes to main, the required `contracts` check from GitHub Actions, resolved review conversations, and blocked force-pushes/deletions. A solo maintainer may use zero required approvals while retaining independent review in the contribution process; require an additional reviewer when one is available.
 
-When the repository is public, enable GitHub private vulnerability reporting and verify its reporting link before advertising it in SECURITY.md. Confirm secret scanning and repository push protection in Security settings. Public and private repository availability differs; do not claim a feature is active solely because a policy file mentions it, or enroll in a paid product unintentionally.
+This repository is public. GitHub private vulnerability reporting, secret scanning and repository push protection were enabled and verified on 2026-09-13. Before a release, recheck those settings and the private reporting link in [SECURITY.md](../SECURITY.md#report-a-vulnerability). Do not infer current settings from this dated record or enroll in a paid product unintentionally.
 
 Changing repository visibility, publishing a release and submitting to OpenAI's public plugin directory are separate owner-authorized actions. A repository catalog is not an OpenAI directory listing.
 

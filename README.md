@@ -4,7 +4,7 @@ Cost-aware delegation for Codex, with named specialist agents and an optional mo
 
 An orchestrating agent can choose tasks dynamically while delegating through registered roles with fixed model and reasoning settings. The optional guard rejects covered spawn requests that violate the project policy. **Enforcement starts off.**
 
-This repository is initially private. GitHub read access is required until the owner changes its visibility. It is a repository-hosted Codex catalog, not a public directory listing or an OpenAI endorsement. No license has been selected for public distribution yet.
+This repository is public and accepts community issue reports. It is a repository-hosted Codex catalog; an OpenAI public-directory listing and endorsement have not been granted. Distribution terms remain under review; see [licensing status](#licensing-status).
 
 ## Start here
 
@@ -16,6 +16,7 @@ This repository is initially private. GitHub read access is required until the o
 | Understand what has actually been tested | [Validation and compatibility](plugins/codex-orchestration/docs/validation.md) |
 | Contribute a change | [Contributing](CONTRIBUTING.md) |
 | Report a security concern | [Security](SECURITY.md) |
+| Report a bug or request an improvement | [GitHub Issues](https://github.com/Number531/Codex-Orchestration/issues) |
 
 ## Install the plugin
 
@@ -27,7 +28,7 @@ codex plugin list --available --json --marketplace codex-orchestration
 codex plugin add codex-orchestration@codex-orchestration
 ```
 
-For a private repository, use Git credentials with read access. SSH is also supported:
+The HTTPS catalog is publicly readable and requires no repository invitation. SSH is also supported for users with GitHub SSH authentication:
 
 ```sh
 codex plugin marketplace add git@github.com:Number531/Codex-Orchestration.git
@@ -49,7 +50,7 @@ Version `0.2.0` aligned the plugin, skills and project markers with this reposit
 
 ## Reviewed versions
 
-For a reproducible install, choose a reviewed tag from [Releases](https://github.com/Number531/Codex-Orchestration/releases) and add `--ref <release-tag>` to the marketplace-add command above. Replace the placeholder with the actual published tag; use one catalog source. Review the [upgrade and rollback procedure](plugins/codex-orchestration/docs/operations.md#upgrade-a-project) before changing an existing installation. Maintainers use the [release procedure](docs/releasing.md).
+For a reproducible install, add `--ref <reviewed-ref>` to the marketplace-add command above. Replace the placeholder with a reviewed commit SHA or a published tag from [Releases](https://github.com/Number531/Codex-Orchestration/releases); use one catalog source. No tagged release has been published yet. Review the [upgrade and rollback procedure](plugins/codex-orchestration/docs/operations.md#upgrade-a-project) before changing an existing installation. Maintainers use the [release procedure](docs/releasing.md).
 
 ## Development checks
 
@@ -63,6 +64,8 @@ python3 -B plugins/codex-orchestration/test/check_docs.py
 
 These checks use synthetic local fixtures and run in [GitHub Actions](.github/workflows/validate.yml). CI does not run paid models or native Codex sessions. Native engine checks, Desktop installation/trust, and live model access are separate validation surfaces; see the [compatibility guide](plugins/codex-orchestration/docs/validation.md).
 
-## Before a public release
+## Licensing status
 
-Choose a license and update the package metadata, confirm branding and source ownership, test onboarding with a separate account, and review the repository contents and history before changing visibility. Publishing to GitHub and submitting to OpenAI's public plugin directory are separate decisions. See [maintainer release guidance](CONTRIBUTING.md#release-preparation).
+A distribution license reflecting the owner's intended free-use and enterprise restrictions is still being selected. No project license has been adopted. Public visibility does not itself grant general reuse or redistribution rights; GitHub explains the [default licensing position and platform fork rights](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository).
+
+Before a versioned release, finalize the license and package metadata, confirm source ownership, and record supported-client validation. Desktop UI and live-account qualification remain open. See [maintainer release guidance](CONTRIBUTING.md#release-preparation). Publishing a GitHub release and submitting to OpenAI's public plugin directory are separate decisions.

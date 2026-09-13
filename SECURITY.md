@@ -10,8 +10,8 @@ The shipped installer and guard make no network calls and load no credentials. C
 
 ## Report a vulnerability
 
-As of 2026-09-12, this repository remains private, GitHub's private vulnerability reporting endpoint is unavailable, and GitHub reports repository secret scanning disabled. Repository push protection has not been verified. Public-release preparation must enable and verify those features where supported. Their presence must be checked in GitHub; this policy does not enable them. See the [release procedure](docs/releasing.md#repository-security-settings).
+As of 2026-09-13, this repository is public and GitHub private vulnerability reporting, secret scanning and repository push protection are enabled and verified through GitHub's API. These controls do not guarantee that every secret or vulnerability will be detected. Maintainers should recheck the settings before releases; see the [release procedure](docs/releasing.md#repository-security-settings).
 
-Use GitHub's private vulnerability reporting for this repository if that option is enabled. While the repository is private, an authorized collaborator can contact the owner through their established private channel. If no private reporting channel is available, open only a minimal, non-sensitive issue requesting one; do not include exploit details, credentials or customer data.
+Use [Report a vulnerability](https://github.com/Number531/Codex-Orchestration/security/advisories/new) for security-sensitive findings. Sign in to GitHub and use the private advisory form. If that channel is unavailable, open only a minimal, non-sensitive issue requesting a private contact route; do not include exploit details, credentials or customer data.
 
 Provide the affected package/client versions, a sanitized reproduction, the violated boundary and observed impact through the private channel. Do not publish a working exploit or sensitive logs in a public issue. This initial project makes no response-time or long-term support commitment.

@@ -1,6 +1,8 @@
 # Contributing
 
-This repository maintains one plugin: `plugins/codex-orchestration/`. Keep changes focused on its existing project setup, delegation, documentation and validation responsibilities. The repository is initially private; collaboration requires access. A distribution license must be selected before the planned public release.
+This public repository maintains one plugin: `plugins/codex-orchestration/`. Keep changes focused on its existing project setup, delegation, documentation and validation responsibilities. Distribution terms remain under review; see [licensing status](README.md#licensing-status).
+
+The owner, `Number531`, is currently the only user with repository write/admin access. Community members can report issues and propose changes through pull requests; the owner decides what to accept and merge. A proposed contribution does not grant write access. Repository permissions and the license governing copies are separate.
 
 ## Local development
 
@@ -29,15 +31,15 @@ Avoid adding a workflow framework, automatic updater, account-wide control claim
 
 ## Report a problem
 
-Use an issue in this repository for a non-sensitive bug or documentation problem. Include OS, package/client versions, the failing command, expected/observed behavior and a minimal sanitized reproduction. Do not attach full user configuration, prompts or logs containing secrets. Security-sensitive details belong in a private report.
+Use [GitHub Issues](https://github.com/Number531/Codex-Orchestration/issues) for a non-sensitive bug, feature request or documentation problem. Sign in to GitHub to submit an issue; no repository invitation is required. Include OS, package/client versions, the failing command, expected/observed behavior and a minimal sanitized reproduction. Do not attach full user configuration, prompts or logs containing secrets. Security-sensitive details belong in the [private reporting channel](SECURITY.md#report-a-vulnerability).
 
 ## Release preparation
 
 Follow the [versioned release and rollback procedure](docs/releasing.md). Changes to `main` require a pull request, the passing `contracts` check and resolved review conversations. Force-pushes and branch deletion are blocked. Zero required GitHub approvals accommodates a solo maintainer; retain an independent review before merging.
 
-Before a public launch:
+Before a versioned release:
 
-1. Confirm the intended license and ownership/branding permissions, add the selected license, and align manifest metadata and documentation. No license is selected by this initial extraction.
+1. Confirm the intended license and ownership/branding permissions, add the selected license, and align manifest metadata and documentation. Public repository visibility does not settle these terms.
 2. Review the complete candidate tree and reachable history for credentials, customer data, internal material and third-party content. This repository starts from selected package files rather than importing the original repository's history.
 3. Pass deterministic checks, review the final diff independently, and record native/client validation honestly. Resolve or explicitly disclose compatibility assumptions.
 4. Trial the documented install, setup, trust, toggle, update and removal procedures in a disposable project with a separate authorized account. Confirm that the configured models are available there.

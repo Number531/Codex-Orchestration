@@ -17,7 +17,7 @@ The `fork_turns` field and the `collaborationspawn_agent` hook name are compatib
 
 ## Install the skills
 
-The standalone repository is [Number531/Codex-Orchestration](https://github.com/Number531/Codex-Orchestration), initially private. Its catalog is `.agents/plugins/marketplace.json`; the marketplace name is `codex-orchestration`.
+The standalone repository is [Number531/Codex-Orchestration](https://github.com/Number531/Codex-Orchestration), publicly readable. Its catalog is `.agents/plugins/marketplace.json`; the marketplace name is `codex-orchestration`.
 
 ```sh
 codex plugin marketplace add https://github.com/Number531/Codex-Orchestration.git
@@ -25,7 +25,7 @@ codex plugin list --available --json --marketplace codex-orchestration
 codex plugin add codex-orchestration@codex-orchestration
 ```
 
-Private access requires Git credentials that can read this repository. Use the SSH equivalent if that is how you authenticate. Plugin installation makes the skills available; project setup is a separate step.
+No repository invitation is required for HTTPS access. Use the SSH equivalent if that is how you authenticate. Plugin installation makes the skills available; project setup is a separate step. Review the repository's [licensing status](../../README.md#licensing-status) before adoption.
 
 ## Set up one project
 
@@ -113,4 +113,4 @@ These skills do not authorize spending, remote writes, merges, or policy changes
 - [Validation and compatibility](docs/validation.md): reproducible checks, evidence and unverified surfaces.
 - [Changelog](CHANGELOG.md), [contribution guidance](../../CONTRIBUTING.md), and [security policy](../../SECURITY.md).
 
-The package has no declared distribution license yet. Keeping the repository private does not settle the licensing decision for a future public release.
+The repository is public, but a distribution license has not yet been adopted. See [licensing status](../../README.md#licensing-status) for the current position.
