@@ -8,7 +8,7 @@ Setup operates on one Git worktree. Paths below are relative to that worktree ro
 
 | Path | Purpose | Rerun behavior |
 |---|---|---|
-| `AGENTS.md` | Managed guidance between `aperture-agent-system:begin/end` markers | Preserves surrounding text; an edited managed block conflicts. |
+| `AGENTS.md` | Managed guidance between `codex-orchestration:begin/end` markers | Preserves surrounding text; an edited managed block conflicts. |
 | `.codex/config.toml` | Features, default child settings and six role bindings | Adds missing compatible settings; conflicting values or unsupported TOML layouts require manual integration. |
 | `.codex/agents/{default,explorer,worker,implementer,auditor,verifier}.toml` | Model/effort pins, sandbox defaults and instructions | Equal files are unchanged; edited package-owned profiles conflict. |
 | `.codex/hooks.json` | One synchronous spawn hook | Preserves unrelated hooks; ambiguous or modified copies of this guard conflict. |

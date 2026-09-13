@@ -1,4 +1,4 @@
-"""Synthetic filesystem contracts for the bounded Aperture project setup."""
+"""Synthetic filesystem contracts for the bounded Codex Orchestration project setup."""
 from __future__ import annotations
 
 import contextlib
@@ -15,7 +15,7 @@ import unittest
 
 PACKAGE = Path(__file__).resolve().parents[1]
 SETUP_PATH = PACKAGE / "scripts" / "setup.py"
-SPEC = importlib.util.spec_from_file_location("aperture_setup", SETUP_PATH)
+SPEC = importlib.util.spec_from_file_location("orchestration_setup", SETUP_PATH)
 assert SPEC and SPEC.loader
 setup = importlib.util.module_from_spec(SPEC)
 import sys
@@ -65,6 +65,95 @@ class SetupTest(unittest.TestCase):
         before = self.controlled_bytes()
         self.apply()
         self.assertEqual(before, self.controlled_bytes())
+
+    def test_legacy_guidance_refuses_preview_and_apply_without_writes(self) -> None:
+        for marker in ["<!-- aperture-agent-system:begin -->",
+                       "<!-- aperture-agent-system:end -->",
+                       f"{setup.BEGIN}\ncurrent\n{setup.END}\n<!-- aperture-agent-system:begin -->"]:
+            with self.subTest(marker=marker):
+                (self.root / "AGENTS.md").write_text("Keep project guidance.\n" + marker + "\n")
+                before = self.controlled_bytes()
+                for args in [(), ("--apply",)]:
+                    status, _out, error = self.invoke(*args)
+                    self.assertEqual(status, 1)
+                    self.assertIn("legacy managed guidance", error)
+                    self.assertEqual(before, self.controlled_bytes())
+                    self.assertFalse((self.root / ".codex").exists())
+
+    def test_legacy_lock_refuses_preview_and_apply_without_writes(self) -> None:
+        lock = self.root / ".aperture-agent-system.setup.lock"
+        for symlink in [False, True]:
+            with self.subTest(symlink=symlink):
+                if symlink:
+                    lock.symlink_to(self.root / "missing-lock-target")
+                else:
+                    lock.write_text("old installer owns this lock")
+                before = self.controlled_bytes()
+                for args in [(), ("--apply",)]:
+                    status, _out, error = self.invoke(*args)
+                    self.assertEqual(status, 1)
+                    self.assertIn("legacy setup lock", error)
+                    self.assertEqual(before, self.controlled_bytes())
+                self.assertTrue(lock.is_symlink() if symlink else lock.exists())
+                lock.unlink()
+
+    def test_legacy_state_appearing_after_preview_refuses_apply(self) -> None:
+        for relative, content in [
+            ("AGENTS.md", "<!-- aperture-agent-system:begin -->\nold guidance\n"),
+            (".aperture-agent-system.setup.lock", "old installer running"),
+        ]:
+            with self.subTest(relative=relative):
+                changes = setup.plan_setup(self.root)
+                legacy = self.root / relative
+                legacy.write_text(content)
+                before = self.controlled_bytes()
+                with self.assertRaisesRegex(setup.SetupError, "legacy"):
+                    setup.apply_changes(self.root, changes)
+                self.assertEqual(before, self.controlled_bytes())
+                self.assertEqual(legacy.read_text(), content)
+                self.assertFalse((self.root / ".codex-orchestration.setup.lock").exists())
+                legacy.unlink()
+
+    def test_manual_legacy_guidance_migration_preserves_flag_and_policy(self) -> None:
+        self.apply()
+        agents = self.root / "AGENTS.md"
+        old = "<!-- aperture-agent-system:begin -->\nlegacy guidance\n<!-- aperture-agent-system:end -->\n"
+        agents.write_text("Keep project guidance.\n\n" + old)
+        flag = self.root / ".codex/delegation-guard.json"
+        policy = self.root / ".codex/delegation-policy.json"
+        flag.write_bytes(b'{"enabled": true}\n')
+        policy.write_bytes(b'{"allowed_models": ["gpt-5.6-luna", "gpt-5.6-terra", "gpt-5.6-sol", "custom-model"]}\n')
+        before_flag, before_policy = flag.read_bytes(), policy.read_bytes()
+        status, _out, error = self.invoke("--apply")
+        self.assertEqual(status, 1)
+        self.assertIn("legacy managed guidance", error)
+        # The operator reviews/removes the old block; setup does not migrate it.
+        agents.write_text("Keep project guidance.\n\n")
+        self.apply()
+        self.assertTrue(agents.read_text().startswith("Keep project guidance.\n\n"))
+        self.assertEqual(agents.read_text().count(setup.BEGIN), 1)
+        self.assertNotIn("aperture-agent-system", agents.read_text())
+        self.assertEqual(flag.read_bytes(), before_flag)
+        self.assertEqual(policy.read_bytes(), before_policy)
+
+    def test_both_lock_names_exclude_installers_during_writes(self) -> None:
+        legacy = self.root / ".aperture-agent-system.setup.lock"
+        current = self.root / ".codex-orchestration.setup.lock"
+        original = setup._write_atomic
+        def observe_locks(path: Path, content: bytes) -> None:
+            for lock in [legacy, current]:
+                self.assertTrue(lock.is_file())
+                # This is the exclusive-create primitive used by both versions.
+                with self.assertRaises(FileExistsError):
+                    os.open(lock, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            original(path, content)
+        setup._write_atomic = observe_locks
+        try:
+            self.apply()
+        finally:
+            setup._write_atomic = original
+        self.assertFalse(legacy.exists())
+        self.assertFalse(current.exists())
 
     def test_merges_existing_config_hooks_and_agents_without_losing_text(self) -> None:
         codex = self.root / ".codex"
@@ -190,22 +279,24 @@ class SetupTest(unittest.TestCase):
             status = setup.main(["--project", str(linked), "--apply"])
         self.assertEqual(status, 0, stderr.getvalue())
         self.assertEqual(git_file.read_bytes(), before)
-        self.assertFalse((linked / ".aperture-agent-system.setup.lock").exists())
+        self.assertFalse((linked / ".codex-orchestration.setup.lock").exists())
         self.assertTrue((linked / ".codex/config.toml").exists())
 
     def test_symlink_or_existing_root_lock_refuses_without_writes(self) -> None:
-        lock = self.root / ".aperture-agent-system.setup.lock"
+        lock = self.root / ".codex-orchestration.setup.lock"
         lock.symlink_to(self.root / "elsewhere")
         before = self.controlled_bytes()
         status, _out, error = self.invoke("--apply")
         self.assertEqual(status, 1)
         self.assertIn("symlink setup lock", error)
         self.assertEqual(before, self.controlled_bytes())
+        self.assertFalse((self.root / ".aperture-agent-system.setup.lock").exists())
         lock.unlink()
         lock.write_text("stale")
         status, _out, error = self.invoke("--apply")
         self.assertEqual(status, 1)
         self.assertIn("stale lock", error)
+        self.assertFalse((self.root / ".aperture-agent-system.setup.lock").exists())
 
     def test_changed_original_after_preflight_is_refused_before_any_write(self) -> None:
         changes = setup.plan_setup(self.root)
@@ -214,7 +305,7 @@ class SetupTest(unittest.TestCase):
         with self.assertRaisesRegex(setup.SetupError, "changed after preview"):
             setup.apply_changes(self.root, changes)
         self.assertEqual(changes[0].target.read_bytes(), b"editor change")
-        self.assertFalse((self.root / ".aperture-agent-system.setup.lock").exists())
+        self.assertFalse((self.root / ".codex-orchestration.setup.lock").exists())
 
     def test_hooks_guard_mentions_across_other_events_conflict(self) -> None:
         asset = json.loads((PACKAGE / "assets/project/.codex/hooks.json").read_text())
@@ -259,6 +350,8 @@ class SetupTest(unittest.TestCase):
         finally:
             setup._write_atomic = original
         self.assertEqual(self.controlled_bytes(), {path: None for path in self.controlled_bytes()})
+        self.assertFalse((self.root / ".aperture-agent-system.setup.lock").exists())
+        self.assertFalse((self.root / ".codex-orchestration.setup.lock").exists())
 
     def test_rollback_refuses_to_replace_an_intervening_edit(self) -> None:
         changes = setup.plan_setup(self.root)

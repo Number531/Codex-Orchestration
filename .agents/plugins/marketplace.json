@@ -5,17 +5,17 @@
   },
   "plugins": [
     {
-      "name": "aperture-agent-system",
+      "name": "codex-orchestration",
       "source": {
         "source": "local",
-        "path": "./plugins/aperture-agent-system"
+        "path": "./plugins/codex-orchestration"
       },
       "policy": {
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
       "category": "Productivity",
-      "version": "0.1.0"
+      "version": "0.2.0"
     }
   ]
 }

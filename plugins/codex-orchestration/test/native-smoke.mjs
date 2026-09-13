@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const binary = process.argv[2];
 assert(binary && path.isAbsolute(binary), 'Supply the absolute Codex executable path.');
-const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'aperture-native-project-')));
+const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'orchestration-native-project-')));
 const init = spawnSync('git', ['init', '-q', root], { encoding: 'utf8' });
 assert.equal(init.status, 0, init.stderr);
 const install = spawnSync('python3', ['-B', path.join(packageRoot, 'scripts/setup.py'), '--project', root, '--apply'], { encoding: 'utf8' });

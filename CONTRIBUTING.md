@@ -1,18 +1,18 @@
 # Contributing
 
-This repository maintains one plugin: `plugins/aperture-agent-system/`. Keep changes focused on its existing project setup, delegation, documentation and validation responsibilities. The repository is initially private; collaboration requires access. A distribution license must be selected before the planned public release.
+This repository maintains one plugin: `plugins/codex-orchestration/`. Keep changes focused on its existing project setup, delegation, documentation and validation responsibilities. The repository is initially private; collaboration requires access. A distribution license must be selected before the planned public release.
 
 ## Local development
 
 Use Python 3.11+ and Git. No Python packages are needed for the deterministic tests. Work on a branch and use disposable Git projects for setup experiments.
 
 ```sh
-python3 -B -m unittest discover -s plugins/aperture-agent-system/test -p 'test_*.py'
-python3 -B plugins/aperture-agent-system/test/check_catalog.py
+python3 -B -m unittest discover -s plugins/codex-orchestration/test -p 'test_*.py'
+python3 -B plugins/codex-orchestration/test/check_catalog.py
 git diff --check
 ```
 
-Read [validation and compatibility](plugins/aperture-agent-system/docs/validation.md) before running native or live checks. Do not automatically invoke paid services, change global trust, install the plugin for someone else, or update their real project as part of a test.
+Read [validation and compatibility](plugins/codex-orchestration/docs/validation.md) before running native or live checks. Do not automatically invoke paid services, change global trust, install the plugin for someone else, or update their real project as part of a test.
 
 GitHub Actions runs the deterministic unit and catalog checks on pushes and pull requests using Python 3.11. Its token has read-only repository access, checkout does not persist credentials, and action dependencies are pinned. Native/live checks remain opt-in; a green CI run does not qualify a desktop client.
 
@@ -22,7 +22,7 @@ Explain the user-visible problem, the resulting behavior, affected files and exe
 
 Preserve the default-off flag, existing project content, explicit trust boundary, scoped authorization and normal permission handling. Hook/profile/policy changes deserve independent review because they affect delegation behavior. Do not claim a deny rule covers clients or execution paths that were not tested.
 
-Keep the portable `plugin.json` and `.codex-plugin/plugin.json` identity/version fields consistent. Maintain the single-entry `.agents/plugins/marketplace.json` catalog and its package-relative source path. The marketplace name is `codex-orchestration`; the plugin ID remains `aperture-agent-system`.
+Keep the portable `plugin.json` and `.codex-plugin/plugin.json` identity/version fields consistent. Maintain the single-entry `.agents/plugins/marketplace.json` catalog and its package-relative source path. The marketplace and plugin ID are both `codex-orchestration`. Keep portable project guidance independent of a maintainer's global instructions, standing billing permissions and unrelated specialist profiles.
 
 Avoid adding a workflow framework, automatic updater, account-wide control claim or global installer without an explicit supported use case and appropriate tests. Never include credentials, `.env` files, local session records, model caches, customer source, or machine-specific paths in a contribution. See [Security](SECURITY.md).
 

@@ -37,13 +37,27 @@ The plugin package/cache and each project's installed files are independent laye
 
 Setup does not automatically upgrade customized assets. Plugin disablement, reinstallation and catalog refresh do not synchronize or remove project configuration.
 
-If you previously installed this plugin from another catalog, inspect the installed source and avoid enabling duplicate copies. The standalone selector is `aperture-agent-system@codex-orchestration`. Use the client's normal plugin management to retire the old copy when appropriate; do not remove other plugins or their catalog as a side effect. Existing project markers and role IDs are unchanged, so review their state before reapplying setup.
+If you previously installed this plugin from another catalog, inspect the installed source and avoid enabling duplicate copies. The standalone selector is `codex-orchestration@codex-orchestration`. Use the client's normal plugin management to retire the old copy when appropriate; do not remove other plugins or their catalog as a side effect.
+
+## Migrate from 0.1.0
+
+Version `0.1.0` used plugin ID `aperture-agent-system`, the three `aperture-*` skills, `<!-- aperture-agent-system:begin -->` / `<!-- aperture-agent-system:end -->` guidance markers, and `.aperture-agent-system.setup.lock`. Version `0.2.0` uses plugin ID `codex-orchestration`, `orchestration-setup`, `orchestration-delivery`, `orchestration-review`, `codex-orchestration` guidance markers and `.codex-orchestration.setup.lock`.
+
+The six role names, project `.codex` files, guard script path and flag/policy schemas are unchanged. There is no automatic migration or alias registration:
+
+1. Stop setup processes before migration. The new installer rejects an existing legacy lock and acquires both the legacy and new lock names during apply, so old and new installers observe mutual exclusion. The legacy lock is a temporary coordination file, not a second installation or migration.
+2. Inspect your project diff, existing guard flag, policy and custom roles. If the old lock is stale, confirm no old installer is running before removing that one lock.
+3. Review the old managed AGENTS block. Manually integrate any custom guidance into your project's own instructions, then remove only the old marked block. Preserve all surrounding text. A malformed or partial old marker also requires review.
+4. Review the new portable guidance and run the new setup preview. Compatible role/config/hook assets are reused; the new managed block is added. Existing valid flags and policies are preserved, including an enabled flag. Migration does not reset an existing project to off.
+5. Apply the reviewed plan, inspect the diff, complete any needed trust review and restart the client. Select the new plugin/skill identifiers and retire the old package installation through normal client management.
+
+If you never installed `0.1.0` into a project, use the ordinary quick start. No changes to global instructions, other worktrees or copies in other repositories are required. Historical identifiers remain only for migration documentation, refusal checks, compatibility locking and regression fixtures.
 
 ## Recover an interrupted setup
 
-Setup rechecks originals, serializes cooperating setup processes with `.aperture-agent-system.setup.lock`, and replaces each file atomically. A caught failure attempts to restore its own unchanged writes. Abrupt termination or unrelated concurrent editing can still leave a partial multi-file installation.
+Setup rechecks originals, serializes cooperating setup processes with `.codex-orchestration.setup.lock` plus the temporary legacy coordination lock, and replaces each file atomically. A caught failure attempts to restore its own unchanged writes. Abrupt termination or unrelated concurrent editing can still leave a partial multi-file installation.
 
-Inspect the project diff after a crash. If the lock remains, confirm no setup process is running before removing that one stale lock. Avoid editing targets during apply. Re-run preview and reconcile partial changes before applying again; do not discard unrelated work with blanket cleanup commands.
+Inspect the project diff after a crash. Either or both lock files may remain; confirm no setup process is running before removing each identified stale lock. Avoid editing targets during apply. Re-run preview and reconcile partial changes before applying again; do not discard unrelated work with blanket cleanup commands.
 
 ## Diagnose a denied or unenforced spawn
 
@@ -66,9 +80,9 @@ Toggle errors can be generic; inspect malformed JSON/TOML locally. Remove sensit
 
 Run `--off` while the project's guard script still exists and confirm the status. For full removal, review the [installed-file table](configuration.md#installed-project-files), then:
 
-- Remove the exact Aperture hook entry, preserving other hooks.
+- Remove the exact Codex Orchestration hook entry, preserving other hooks.
 - Remove the six package role bindings/files and defaults/features added solely for this package. Preserve settings still needed by other tools.
-- Remove the marked Aperture section from `AGENTS.md`, preserving surrounding text.
+- Remove the marked Codex Orchestration section from `AGENTS.md`, preserving surrounding text.
 - Remove the project flag, policy and guard script once no remaining hook references them.
 
 Review the diff and restart. There is no destructive uninstall or stored snapshot that can decide which shared settings the project still needs. Removing the plugin through Codex affects its installation/cache, not the project cleanup above. Other worktrees and global configuration are not changed by this procedure.

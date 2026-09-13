@@ -30,12 +30,12 @@ class PackageTests(unittest.TestCase):
         for key in ['name','version','author','description']:
             self.assertEqual(manifest[key], compat[key])
         self.assertEqual(manifest['extensions']['com.openai']['interface'], compat['interface'])
-        self.assertEqual(compat['interface']['displayName'], 'Aperture-Agent-System')
+        self.assertEqual(compat['interface']['displayName'], 'Codex-Orchestration')
         self.assertFalse((PACKAGE / 'hooks').exists(), 'No implicit plugin-hook loading contract')
 
     def test_skills_are_direct_children_self_contained_and_portable(self):
         skills = list((PACKAGE / 'skills').glob('*/SKILL.md'))
-        self.assertEqual({s.parent.name for s in skills}, {'aperture-setup','aperture-delivery','aperture-review'})
+        self.assertEqual({s.parent.name for s in skills}, {'orchestration-setup','orchestration-delivery','orchestration-review'})
         for skill in skills:
             text = skill.read_text()
             self.assertTrue(text.startswith('---\n'))
@@ -79,20 +79,20 @@ class PackageTests(unittest.TestCase):
         self.assertLess(total, 1024*1024)
 
     def test_catalog_checker_accepts_valid_and_rejects_broken_integration(self):
-        with tempfile.TemporaryDirectory(prefix='aperture-catalog-') as scratch:
+        with tempfile.TemporaryDirectory(prefix='orchestration-catalog-') as scratch:
             root = Path(scratch)
-            shutil.copytree(PACKAGE, root/'plugins/aperture-agent-system', ignore=shutil.ignore_patterns('__pycache__'))
+            shutil.copytree(PACKAGE, root/'plugins/codex-orchestration', ignore=shutil.ignore_patterns('__pycache__'))
             file = root/'.agents/plugins/marketplace.json'; file.parent.mkdir(parents=True)
-            catalog = {'name':'codex-orchestration', 'plugins':[{'name':'aperture-agent-system','source':{'source':'local','path':'./plugins/aperture-agent-system'},'policy':{'installation':'AVAILABLE','authentication':'ON_INSTALL'},'category':'Productivity','version':'0.1.0'}]}
+            catalog = {'name':'codex-orchestration', 'plugins':[{'name':'codex-orchestration','source':{'source':'local','path':'./plugins/codex-orchestration'},'policy':{'installation':'AVAILABLE','authentication':'ON_INSTALL'},'category':'Productivity','version':'0.2.0'}]}
             file.write_text(json.dumps(catalog)); catalog_check.check(root)
             catalog['plugins'][0]['source']['path']='./missing'
             file.write_text(json.dumps(catalog))
             with self.assertRaises(AssertionError): catalog_check.check(root)
-            catalog['plugins'][0]['source']['path']='./plugins/aperture-agent-system'
+            catalog['plugins'][0]['source']['path']='./plugins/codex-orchestration'
             catalog['plugins'][0]['version']='9.9.9'
             file.write_text(json.dumps(catalog))
             with self.assertRaises(AssertionError): catalog_check.check(root)
-            catalog['plugins'][0]['version']='0.1.0'
+            catalog['plugins'][0]['version']='0.2.0'
             catalog['plugins'].append(catalog['plugins'][0])
             file.write_text(json.dumps(catalog))
             with self.assertRaises(AssertionError): catalog_check.check(root)
