@@ -4,7 +4,7 @@ Release only a reviewed commit of this single plugin. A tag selects a repository
 
 ## Prepare and validate
 
-1. Confirm the license, attribution and intended distribution audience. Review the candidate tree and reachable history for sensitive material; a pattern scan does not establish ownership or prove that every secret is absent.
+1. Confirm MIT license notices, attribution and intended distribution audience. Keep `LICENSE` and `plugins/codex-orchestration/LICENSE` identical and both manifest license fields set to `MIT`. Review the candidate tree and reachable history for sensitive material; a pattern scan does not establish ownership or prove that every secret is absent.
 2. Update both package manifests, the catalog version, changelog and affected onboarding/compatibility documentation. Keep delegation enforcement off by default.
 3. Run the deterministic checks from the repository root:
 

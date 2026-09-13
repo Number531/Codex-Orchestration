@@ -1,6 +1,6 @@
 # Contributing
 
-This public repository maintains one plugin: `plugins/codex-orchestration/`. Keep changes focused on its existing project setup, delegation, documentation and validation responsibilities. Distribution terms remain under review; see [licensing status](README.md#licensing-status).
+This public repository maintains one plugin: `plugins/codex-orchestration/`. Keep changes focused on its existing project setup, delegation, documentation and validation responsibilities. The project uses the [MIT License](LICENSE); preserve its copyright and permission notices in distributed copies.
 
 The owner, `Number531`, is currently the only user with repository write/admin access. Community members can report issues and propose changes through pull requests; the owner decides what to accept and merge. A proposed contribution does not grant write access. Repository permissions and the license governing copies are separate.
 
@@ -39,7 +39,7 @@ Follow the [versioned release and rollback procedure](docs/releasing.md). Change
 
 Before a versioned release:
 
-1. Confirm the intended license and ownership/branding permissions, add the selected license, and align manifest metadata and documentation. Public repository visibility does not settle these terms.
+1. Confirm ownership/branding permissions, preserve the MIT license notices, keep the root and package license copies identical, and align manifest metadata and documentation. Public repository visibility does not settle third-party rights.
 2. Review the complete candidate tree and reachable history for credentials, customer data, internal material and third-party content. This repository starts from selected package files rather than importing the original repository's history.
 3. Pass deterministic checks, review the final diff independently, and record native/client validation honestly. Resolve or explicitly disclose compatibility assumptions.
 4. Trial the documented install, setup, trust, toggle, update and removal procedures in a disposable project with a separate authorized account. Confirm that the configured models are available there.

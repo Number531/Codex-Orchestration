@@ -1,6 +1,6 @@
 # Codex-Orchestration
 
-**Version 0.2.1 · Plugin ID `codex-orchestration` · Guard off by default**
+**Version 0.2.2 · Plugin ID `codex-orchestration` · MIT licensed · Guard off by default**
 
 A small Codex plugin for delegating dynamic tasks through named, model-pinned specialists. It provides three skills, six agent profiles, project guidance, a preview-first installer, and an optional synchronous spawn guard.
 
@@ -25,7 +25,7 @@ codex plugin list --available --json --marketplace codex-orchestration
 codex plugin add codex-orchestration@codex-orchestration
 ```
 
-No repository invitation is required for HTTPS access. Use the SSH equivalent if that is how you authenticate. Plugin installation makes the skills available; project setup is a separate step. Review the repository's [licensing status](../../README.md#licensing-status) before adoption.
+No repository invitation is required for HTTPS access. Use the SSH equivalent if that is how you authenticate. Plugin installation makes the skills available; project setup is a separate step. The package includes its [MIT License](LICENSE).
 
 ## Set up one project
 
@@ -113,4 +113,4 @@ These skills do not authorize spending, remote writes, merges, or policy changes
 - [Validation and compatibility](docs/validation.md): reproducible checks, evidence and unverified surfaces.
 - [Changelog](CHANGELOG.md), [contribution guidance](../../CONTRIBUTING.md), and [security policy](../../SECURITY.md).
 
-The repository is public, but a distribution license has not yet been adopted. See [licensing status](../../README.md#licensing-status) for the current position.
+The package is available under the [MIT License](LICENSE), including commercial and enterprise use. Preserve its copyright and permission notices when redistributing copies or substantial portions, including setup-generated project assets. Setup does not change your project's own license; include this notice with any redistributed package assets.
