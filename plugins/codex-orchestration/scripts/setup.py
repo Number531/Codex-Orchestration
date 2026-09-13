@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preview or safely install Aperture project-local configuration.
+"""Preview or safely install Codex Orchestration project-local configuration.
 
 The installer deliberately supports only the small, portable asset inventory in
 this package.  It is a cooperative installer: it detects conflicting edits
@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+from contextlib import contextmanager
 import fcntl
 import json
 import os
@@ -26,8 +27,11 @@ LIMIT = 1024 * 1024
 PACKAGE = Path(__file__).resolve().parents[1]
 ASSETS = PACKAGE / "assets"
 PROJECT_ASSETS = ASSETS / "project"
-BEGIN = "<!-- aperture-agent-system:begin -->"
-END = "<!-- aperture-agent-system:end -->"
+BEGIN = "<!-- codex-orchestration:begin -->"
+END = "<!-- codex-orchestration:end -->"
+# Detect the prior identity without automatically migrating another installation.
+LEGACY_MARKER = "<!-- aperture-agent-system:"
+LEGACY_LOCK = ".aperture-agent-system.setup.lock"
 ROLE_NAMES = ("default", "explorer", "worker", "implementer", "auditor", "verifier")
 CONTROL_FILES = (
     Path(".codex/config.toml"),
@@ -340,8 +344,18 @@ def validate_project_root(root_arg: str) -> Path:
     return root.resolve()
 
 
+def _reject_legacy_setup(root: Path, *, check_lock: bool = True) -> None:
+    lock = root / LEGACY_LOCK
+    if check_lock and (lock.exists() or lock.is_symlink()):
+        raise SetupError("legacy setup lock exists; another installer may be running; review locks before migration")
+    existing = read_file(root / "AGENTS.md", missing_ok=True)
+    if existing is not None and LEGACY_MARKER in _utf8(existing, "existing AGENTS.md"):
+        raise SetupError("legacy managed guidance requires manual migration; see docs/operations.md")
+
+
 def plan_setup(root: Path) -> list[Change]:
     """Return all writes, or raise before any filesystem mutation."""
+    _reject_legacy_setup(root)
     changes: list[Change] = []
     for relative in CONTROL_FILES:
         source = asset_bytes(relative)
@@ -382,7 +396,7 @@ def plan_setup(root: Path) -> list[Change]:
     if len(after) > LIMIT:
         raise SetupError(f"planned output exceeds 1 MiB bound: {target}")
     if before != after:
-        changes.append(Change(target, after, before, "append managed Aperture guidance"))
+        changes.append(Change(target, after, before, "append managed Codex Orchestration guidance"))
     return changes
 
 
@@ -392,7 +406,7 @@ def _write_atomic(path: Path, content: bytes) -> None:
         _not_link_regular(path)
         mode = path.stat().st_mode & 0o777
     path.parent.mkdir(parents=True, exist_ok=True)
-    descriptor, name = tempfile.mkstemp(prefix=".aperture-", dir=path.parent)
+    descriptor, name = tempfile.mkstemp(prefix=".orchestration-", dir=path.parent)
     temporary = Path(name)
     try:
         with os.fdopen(descriptor, "wb") as handle:
@@ -407,9 +421,9 @@ def _write_atomic(path: Path, content: bytes) -> None:
             temporary.unlink()
 
 
-def _acquire_lock(root: Path) -> tuple[int, Path, tuple[int, int]]:
+def _acquire_lock(root: Path, name: str = ".codex-orchestration.setup.lock") -> tuple[int, Path, tuple[int, int]]:
     """Acquire a root-local cooperative lock without writing Git metadata."""
-    lock = root / ".aperture-agent-system.setup.lock"
+    lock = root / name
     _safe_dir(lock.parent, root, create_ok=True)
     if lock.exists() or lock.is_symlink():
         if lock.is_symlink():
@@ -437,48 +451,58 @@ def _remove_owned_lock(lock: Path, identity: tuple[int, int]) -> None:
         return
 
 
-def apply_changes(root: Path, changes: list[Change]) -> None:
-    """Recheck then apply planned writes; restore only writes still ours on failure."""
-    if not changes:
-        return
-    descriptor, lock_path, identity = _acquire_lock(root)
+@contextmanager
+def _setup_lock(root: Path, name: str):
+    descriptor, lock_path, identity = _acquire_lock(root, name)
     try:
         with os.fdopen(descriptor, "wb") as lock:
             fcntl.flock(lock, fcntl.LOCK_EX)
-            written: list[Change] = []
             try:
-                for change in changes:
-                    _safe_dir(change.target.parent, root, create_ok=True)
-                    if read_file(change.target, missing_ok=True) != change.before:
-                        raise SetupError(f"project changed after preview: {change.target}")
-                    _safe_dir(change.target.parent, root, create_ok=True)
-                    if read_file(change.target, missing_ok=True) != change.before:
-                        raise SetupError(f"project changed immediately before write: {change.target}")
-                    _write_atomic(change.target, change.content)
-                    written.append(change)
-            except Exception as error:
-                if not written and isinstance(error, SetupError):
-                    raise
-                refused = False
-                for change in reversed(written):
-                    try:
-                        _safe_dir(change.target.parent, root, create_ok=True)
-                        if read_file(change.target, missing_ok=True) != change.content:
-                            refused = True
-                            continue
-                        _safe_dir(change.target.parent, root, create_ok=True)
-                        if change.before is None:
-                            change.target.unlink()
-                        else:
-                            _write_atomic(change.target, change.before)
-                    except Exception:
-                        refused = True
-                extra = "; rollback refused an intervening edit" if refused else ""
-                raise SetupError(f"apply failed and attempted rollback{extra}") from error
+                yield
             finally:
                 fcntl.flock(lock, fcntl.LOCK_UN)
     finally:
         _remove_owned_lock(lock_path, identity)
+
+
+def apply_changes(root: Path, changes: list[Change]) -> None:
+    """Recheck then apply planned writes; restore only writes still ours on failure."""
+    if not changes:
+        return
+    _reject_legacy_setup(root)
+    # Acquire the legacy name first so older installers also observe exclusion.
+    with _setup_lock(root, LEGACY_LOCK), _setup_lock(root, ".codex-orchestration.setup.lock"):
+        _reject_legacy_setup(root, check_lock=False)  # We own the legacy lock now.
+        written: list[Change] = []
+        try:
+            for change in changes:
+                _safe_dir(change.target.parent, root, create_ok=True)
+                if read_file(change.target, missing_ok=True) != change.before:
+                    raise SetupError(f"project changed after preview: {change.target}")
+                _safe_dir(change.target.parent, root, create_ok=True)
+                if read_file(change.target, missing_ok=True) != change.before:
+                    raise SetupError(f"project changed immediately before write: {change.target}")
+                _write_atomic(change.target, change.content)
+                written.append(change)
+        except Exception as error:
+            if not written and isinstance(error, SetupError):
+                raise
+            refused = False
+            for change in reversed(written):
+                try:
+                    _safe_dir(change.target.parent, root, create_ok=True)
+                    if read_file(change.target, missing_ok=True) != change.content:
+                        refused = True
+                        continue
+                    _safe_dir(change.target.parent, root, create_ok=True)
+                    if change.before is None:
+                        change.target.unlink()
+                    else:
+                        _write_atomic(change.target, change.before)
+                except Exception:
+                    refused = True
+            extra = "; rollback refused an intervening edit" if refused else ""
+            raise SetupError(f"apply failed and attempted rollback{extra}") from error
 
 
 def main(argv: list[str] | None = None) -> int:

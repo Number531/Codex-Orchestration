@@ -1,4 +1,6 @@
-## Aperture agent system
+## Codex orchestration
+
+These are project-local defaults. They grant no standing authorization for paid services or sharing project data with external providers; those actions must be covered by the user's task authorization.
 
 Use the smallest workflow that adequately controls the requested task. Small reversible changes need targeted validation; bounded nontrivial work needs a short plan, implementation and independent verification. Materially risky or long-running work needs an explicit persistent contract. Read the closest project instructions. Preserve unrelated work and do not weaken required checks to obtain a pass.
 

@@ -1,6 +1,6 @@
-# Aperture-Agent-System
+# Codex-Orchestration
 
-**Version 0.1.0 · Plugin ID `aperture-agent-system` · Guard off by default**
+**Version 0.2.0 · Plugin ID `codex-orchestration` · Guard off by default**
 
 A small Codex plugin for delegating dynamic tasks through named, model-pinned specialists. It provides three skills, six agent profiles, project guidance, a preview-first installer, and an optional synchronous spawn guard.
 
@@ -22,17 +22,17 @@ The standalone repository is [Number531/Codex-Orchestration](https://github.com/
 ```sh
 codex plugin marketplace add https://github.com/Number531/Codex-Orchestration.git
 codex plugin list --available --json --marketplace codex-orchestration
-codex plugin add aperture-agent-system@codex-orchestration
+codex plugin add codex-orchestration@codex-orchestration
 ```
 
-Private access requires your GitHub credentials. Use the SSH equivalent if that is how you authenticate. In a new Codex session, select the installed `aperture-setup` skill for your target project. Installation alone does **not** register project agents, trust hooks, or enable the guard.
+Private access requires your GitHub credentials. Use the SSH equivalent if that is how you authenticate. In a new Codex session, select the installed `orchestration-setup` skill for your target project. Installation alone does **not** register project agents, trust hooks, or enable the guard.
 
 Alternatively, clone a reviewed checkout and use its setup script directly. This installs the project assets without registering plugin skills:
 
 ```sh
 git clone https://github.com/Number531/Codex-Orchestration.git
 cd Codex-Orchestration
-APERTURE_PACKAGE="$PWD/plugins/aperture-agent-system"
+ORCHESTRATION_PACKAGE="$PWD/plugins/codex-orchestration"
 ```
 
 ## Set up one project
@@ -40,18 +40,20 @@ APERTURE_PACKAGE="$PWD/plugins/aperture-agent-system"
 Use the absolute root of the target Git worktree, not a subdirectory. A separate disposable Git project is a useful first trial.
 
 ```sh
-python3 "$APERTURE_PACKAGE/scripts/setup.py" --project /absolute/path/to/project
+python3 "$ORCHESTRATION_PACKAGE/scripts/setup.py" --project /absolute/path/to/project
 ```
 
 The default is a read-only preview. It prints the planned paths or `Preview: no changes.` Review the source assets and the target project's existing configuration before applying the plan:
 
 ```sh
-python3 "$APERTURE_PACKAGE/scripts/setup.py" --project /absolute/path/to/project --apply
+python3 "$ORCHESTRATION_PACKAGE/scripts/setup.py" --project /absolute/path/to/project --apply
 ```
 
-Review the resulting project diff, complete the client's normal project/hook trust flow, and start a fresh session. Setup does not grant that trust. If you installed through the plugin manager, `aperture-setup` resolves its package location; the shell variable above is only for the checkout route.
+Review the resulting project diff, complete the client's normal project/hook trust flow, and start a fresh session. Setup does not grant that trust. If you installed through the plugin manager, `orchestration-setup` resolves its package location; the shell variable above is only for the checkout route.
 
 New installations leave the guard off. Reruns preserve valid existing flag and model-policy values. A setup conflict stops the operation; use [operations and recovery](docs/operations.md) rather than forcing an overwrite.
+
+Upgrading from `0.1.0` changes the plugin/skill identifiers and managed guidance markers. Follow the [manual migration guide](docs/operations.md#migrate-from-010) before setup; the installer refuses recognized legacy guidance or a legacy setup lock instead of appending a second managed block.
 
 ## Turn enforcement on or off
 
@@ -69,9 +71,9 @@ python3 /absolute/path/to/project/.agents/system/hooks/delegation_guard.py --off
 
 | Skill | Example request | Behavior |
 |---|---|---|
-| `aperture-setup` | “Preview Aperture setup for this project.” | Inspects project settings and previews explicit installation. |
-| `aperture-delivery` | “Implement this bounded fix with a short plan, targeted tests and independent verification.” | Uses the existing project workflow where one owns the task; otherwise provides a small delivery process. |
-| `aperture-review` | “Verify this change against its acceptance criteria.” | Selects a focused audit or verification role and reports evidence and limits. |
+| `orchestration-setup` | “Preview Codex Orchestration setup for this project.” | Inspects project settings and previews explicit installation. |
+| `orchestration-delivery` | “Implement this bounded fix with a short plan, targeted tests and independent verification.” | Uses the existing project workflow where one owns the task; otherwise provides a small delivery process. |
+| `orchestration-review` | “Verify this change against its acceptance criteria.” | Selects a focused audit or verification role and reports evidence and limits. |
 
 These skills do not authorize spending, remote writes, merges, or policy changes outside the user's task. They also do not replace project-specific instructions. The setup procedure installs a concise managed [AGENTS section](assets/AGENTS.md), not the original development repository's full workflow system.
 

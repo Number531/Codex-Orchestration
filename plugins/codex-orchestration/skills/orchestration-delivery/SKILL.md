@@ -1,9 +1,9 @@
 ---
-name: aperture-delivery
+name: orchestration-delivery
 description: Deliver bounded nontrivial changes with a concise plan, appropriately priced delegation, targeted tests and independent verification.
 ---
 
-# Aperture bounded delivery
+# Codex Orchestration bounded delivery
 
 Use when the user requests a bounded implementation and no existing project workflow owns it. This skill provides a small cadence, not a second lifecycle for an active plan.
 

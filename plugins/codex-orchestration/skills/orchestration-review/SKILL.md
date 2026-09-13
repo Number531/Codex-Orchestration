@@ -1,9 +1,9 @@
 ---
-name: aperture-review
-description: Independently audit a bounded change or verify its acceptance criteria using the configured Aperture specialist roles and executable evidence.
+name: orchestration-review
+description: Independently audit a bounded change or verify its acceptance criteria using the configured Codex Orchestration specialist roles and executable evidence.
 ---
 
-# Aperture independent review
+# Codex Orchestration independent review
 
 Read the approved outcome, allowed scope, final diff and existing validation. Respect the project's owning workflow and finding vocabulary. Use `auditor` (Sol High) for adversarial defect discovery, or `verifier` (Terra Medium) for acceptance proof. Do not conflate an audit with verification or require both for every small edit.
 
