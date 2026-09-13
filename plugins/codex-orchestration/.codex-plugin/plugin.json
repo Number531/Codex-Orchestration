@@ -1,6 +1,7 @@
 {
   "name": "codex-orchestration",
-  "version": "0.2.1",
+  "version": "0.2.2",
+  "license": "MIT",
   "description": "Team delegation, focused delivery and explicit Codex project setup with an optional model guard.",
   "author": {
     "name": "Codex-Orchestration contributors"

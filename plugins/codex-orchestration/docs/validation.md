@@ -6,10 +6,11 @@
 
 | Surface | Evidence | Limit |
 |---|---|---|
-| Setup, guard, profiles, package and documentation contracts | 54 deterministic unit tests passed for the `0.2.1` candidate, including legacy migration refusal, installer lock exclusion and documentation-check regressions. | Synthetic projects do not establish live account access or UI behavior. |
+| Setup, guard, profiles, package and documentation contracts | 54 deterministic unit tests passed for the `0.2.2` candidate, including MIT metadata/license-copy consistency, legacy migration refusal, installer lock exclusion and documentation-check regressions. | Synthetic projects do not establish live account access or UI behavior. |
 | Native spawn behavior | 17 cases passed on CLI `0.154.0` and Desktop engine `0.154.0-alpha.6.2` on macOS, recorded 2026-09-12. | The harness supplies reviewed configuration/trust overrides and a loopback scripted provider. |
 | Local-catalog installation and setup | CLI `0.154.0` and Desktop engine `0.154.0-alpha.6.2` installed the `0.2.1` candidate on macOS, recorded 2026-09-12. | This is a local-catalog trial; it does not establish GitHub authentication or Desktop UI behavior. |
 | Pinned GitHub-commit installation | Both engines installed commit `1ea514efdacb8aa1077e4eb81a8f7d90d1255306` through the GitHub catalog on 2026-09-13. | Used the maintainer's existing Git authentication while the repository was private; no separate community-account trial. |
+| MIT package installation | Both engines installed `0.2.2` from a local catalog on 2026-09-13. The cache included the MIT notice and metadata; all 31 package files matched the trial checkout, setup was repeatable, and the guard stayed off. | Disposable configuration/cache and projects only; no trust grant, Desktop UI test or live-model call. |
 | Desktop UI install/trust and live models | Not established by those tests. | Requires a separately authorized onboarding trial. |
 | Windows, other clients or versions | Not qualified by the original native matrix. | The installer uses POSIX `fcntl`; the hook command assumes a compatible shell. |
 
@@ -18,6 +19,8 @@ The `0.2.0` branding update preserves the guard, six role profiles, model pins a
 The `0.2.1` trial used a separate temporary Codex configuration/cache and Git project for each executable. Fresh processes listed the installed, enabled plugin; its three skill files and all 30 package files matched the candidate checkout. Setup ran from the installed cache, a second preview reported no changes, and the flag reported off. No auth files were copied, trust granted or live models called. The real global configuration and plugin-registry hashes were unchanged. Codex still discovered the ambient personal marketplace; the test selected only this package and is not a claim of complete operating-system isolation.
 
 The subsequent pinned GitHub-commit trial repeated those checks successfully on both engines against the exact commit above. Later public-state documentation edits did not change runtime assets. After the visibility change, unauthenticated HTTP requests separately confirmed public repository and Issues access. That access check did not invoke Codex or establish model availability.
+
+The `0.2.2` licensing update preserves those runtime assets and adds the package's MIT notice. The separate local-catalog trial confirmed that the licensed package reached each cache and that real global configuration hashes were unchanged. Versioned-package installation and project-asset installation remain separate; see [operations](operations.md#upgrade-a-project).
 
 The production Desktop app was not launched for the trial. A safe, documented separate UI profile was not established for that build; qualifying its graphical installation and normal trust flow requires a disposable OS user/VM or a supported isolated app environment.
 

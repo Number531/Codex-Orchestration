@@ -4,7 +4,7 @@ Cost-aware delegation for Codex, with named specialist agents and an optional mo
 
 An orchestrating agent can choose tasks dynamically while delegating through registered roles with fixed model and reasoning settings. The optional guard rejects covered spawn requests that violate the project policy. **Enforcement starts off.**
 
-This repository is public and accepts community issue reports. It is a repository-hosted Codex catalog; an OpenAI public-directory listing and endorsement have not been granted. Distribution terms remain under review; see [licensing status](#licensing-status).
+This public repository is [MIT licensed](#licensing-status) and accepts community issue reports. It is a repository-hosted Codex catalog; an OpenAI public-directory listing and endorsement have not been granted.
 
 ## Start here
 
@@ -66,6 +66,8 @@ These checks use synthetic local fixtures and run in [GitHub Actions](.github/wo
 
 ## Licensing status
 
-A distribution license reflecting the owner's intended free-use and enterprise restrictions is still being selected. No project license has been adopted. Public visibility does not itself grant general reuse or redistribution rights; GitHub explains the [default licensing position and platform fork rights](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository).
+The repository and plugin use the [MIT License](LICENSE). Individuals and organizations, including enterprises, may use, modify and redistribute the software commercially or noncommercially under those terms. Copies or substantial portions must retain the copyright and permission notices. The software is provided without warranty.
 
-Before a versioned release, finalize the license and package metadata, confirm source ownership, and record supported-client validation. Desktop UI and live-account qualification remain open. See [maintainer release guidance](CONTRIBUTING.md#release-preparation). Publishing a GitHub release and submitting to OpenAI's public plugin directory are separate decisions.
+The installed plugin contains its own [license copy](plugins/codex-orchestration/LICENSE), matching the repository license. GitHub write permissions remain controlled by the owner; the license governs reuse of copies.
+
+Before a versioned release, verify license notices, source ownership and supported-client validation. Desktop UI and live-account qualification remain open. See [maintainer release guidance](CONTRIBUTING.md#release-preparation). Publishing a GitHub release and submitting to OpenAI's public plugin directory are separate decisions.

@@ -27,8 +27,10 @@ class PackageTests(unittest.TestCase):
         self.assertEqual(manifest['name'], PACKAGE.name)
         self.assertFalse(set(manifest['author']) - {'name','email','url'})
         compat = json.loads((PACKAGE / '.codex-plugin/plugin.json').read_text())
-        for key in ['name','version','author','description']:
+        for key in ['name','version','author','description','license']:
             self.assertEqual(manifest[key], compat[key])
+        self.assertEqual(manifest['license'], 'MIT')
+        self.assertEqual((PACKAGE / 'LICENSE').read_bytes(), (PACKAGE.parents[1] / 'LICENSE').read_bytes())
         self.assertEqual(manifest['extensions']['com.openai']['interface'], compat['interface'])
         self.assertEqual(compat['interface']['displayName'], 'Codex-Orchestration')
         self.assertFalse((PACKAGE / 'hooks').exists(), 'No implicit plugin-hook loading contract')
@@ -83,7 +85,7 @@ class PackageTests(unittest.TestCase):
             root = Path(scratch)
             shutil.copytree(PACKAGE, root/'plugins/codex-orchestration', ignore=shutil.ignore_patterns('__pycache__'))
             file = root/'.agents/plugins/marketplace.json'; file.parent.mkdir(parents=True)
-            catalog = {'name':'codex-orchestration', 'plugins':[{'name':'codex-orchestration','source':{'source':'local','path':'./plugins/codex-orchestration'},'policy':{'installation':'AVAILABLE','authentication':'ON_INSTALL'},'category':'Productivity','version':'0.2.1'}]}
+            catalog = {'name':'codex-orchestration', 'plugins':[{'name':'codex-orchestration','source':{'source':'local','path':'./plugins/codex-orchestration'},'policy':{'installation':'AVAILABLE','authentication':'ON_INSTALL'},'category':'Productivity','version':'0.2.2'}]}
             file.write_text(json.dumps(catalog)); catalog_check.check(root)
             catalog['plugins'][0]['source']['path']='./missing'
             file.write_text(json.dumps(catalog))
@@ -92,7 +94,7 @@ class PackageTests(unittest.TestCase):
             catalog['plugins'][0]['version']='9.9.9'
             file.write_text(json.dumps(catalog))
             with self.assertRaises(AssertionError): catalog_check.check(root)
-            catalog['plugins'][0]['version']='0.2.1'
+            catalog['plugins'][0]['version']='0.2.2'
             catalog['plugins'].append(catalog['plugins'][0])
             file.write_text(json.dumps(catalog))
             with self.assertRaises(AssertionError): catalog_check.check(root)
