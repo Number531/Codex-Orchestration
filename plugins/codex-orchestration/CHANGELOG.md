@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1 — Unreleased
+
+Separated installed-plugin and checkout setup instructions, documented project and hook trust separately, and stated the Unix prerequisite and default-off activation guidance. Added offline documentation checks and maintainer release/rollback instructions. The installer, hook, role profiles, model pins and project guidance are unchanged.
+
+Disposable local-catalog installation passed on CLI `0.154.0` and Desktop engine `0.154.0-alpha.6.2` on macOS: three cached skills, matching package files, repeatable setup and guard off. Desktop UI trust and live model access remain unqualified. Distribution license and publication are pending owner decisions.
+
 ## 0.2.0 — 2026-09-12
 
 Renamed the plugin/package to `codex-orchestration` and its skills to `orchestration-setup`, `orchestration-delivery` and `orchestration-review`. Updated neutral author/display metadata, project guidance, installer markers, documentation, CI paths and catalog contracts. Global configuration and other repositories are outside this change.

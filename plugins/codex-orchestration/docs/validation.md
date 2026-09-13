@@ -6,13 +6,17 @@
 
 | Surface | Evidence | Limit |
 |---|---|---|
-| Setup, guard, profiles and package contracts | 50 deterministic unit tests passed for `0.2.0`, including legacy migration refusal and installer lock exclusion. | Synthetic projects do not establish live account access or UI behavior. |
+| Setup, guard, profiles, package and documentation contracts | 54 deterministic unit tests passed for the `0.2.1` candidate, including legacy migration refusal, installer lock exclusion and documentation-check regressions. | Synthetic projects do not establish live account access or UI behavior. |
 | Native spawn behavior | 17 cases passed on CLI `0.154.0` and Desktop engine `0.154.0-alpha.6.2` on macOS, recorded 2026-09-12. | The harness supplies reviewed configuration/trust overrides and a loopback scripted provider. |
-| Catalog discovery | Both original tested binaries discovered the original entry without installation. | Standalone catalog identity and consistency are checked separately. |
+| Local-catalog installation and setup | CLI `0.154.0` and Desktop engine `0.154.0-alpha.6.2` installed the `0.2.1` candidate on macOS, recorded 2026-09-12. | This is a local-catalog trial; it does not establish GitHub authentication or Desktop UI behavior. |
 | Desktop UI install/trust and live models | Not established by those tests. | Requires a separately authorized onboarding trial. |
 | Windows, other clients or versions | Not qualified by the original native matrix. | The installer uses POSIX `fcntl`; the hook command assumes a compatible shell. |
 
 The `0.2.0` branding update preserves the guard, six role profiles, model pins and default-off flag. It renames package/skill identifiers and installer markers, and adds refusal checks for recognized legacy guidance/locks. Local setup tests cover that transition. Do not treat inherited native evidence as a newly executed matrix or a test of the renamed plugin's UI installation.
+
+The `0.2.1` trial used a separate temporary Codex configuration/cache and Git project for each executable. Fresh processes listed the installed, enabled plugin; its three skill files and all 30 package files matched the candidate checkout. Setup ran from the installed cache, a second preview reported no changes, and the flag reported off. No auth files were copied, trust granted or live models called. The real global configuration and plugin-registry hashes were unchanged. Codex still discovered the ambient personal marketplace; the test selected only this package and is not a claim of complete operating-system isolation.
+
+The production Desktop app was not launched for the trial. A safe, documented separate UI profile was not established for that build; qualifying its graphical installation and normal trust flow requires a disposable OS user/VM or a supported isolated app environment.
 
 ## Local checks
 
@@ -21,9 +25,10 @@ From the repository root, with Python 3.11+ and Git:
 ```sh
 python3 -B -m unittest discover -s plugins/codex-orchestration/test -p 'test_*.py'
 python3 -B plugins/codex-orchestration/test/check_catalog.py
+python3 -B plugins/codex-orchestration/test/check_docs.py
 ```
 
-Tests cover setup preservation/conflicts, filesystem failures, rollback behavior, guard acceptance/denial, role pins, manifests and synthetic catalogs. The catalog check verifies this repository's single-plugin catalog. They do not install into real projects or global Codex configuration.
+Tests cover setup preservation/conflicts, filesystem failures, rollback behavior, guard acceptance/denial, role pins, manifests, synthetic catalogs and documentation-check failures. The catalog check verifies this repository's single-plugin catalog. The offline documentation check validates tracked Markdown inline local links, ATX heading anchors and JSON/TOML fences; it does not execute shell examples or check external URLs. They do not install into real projects or global Codex configuration.
 
 ## Try the documented setup safely
 

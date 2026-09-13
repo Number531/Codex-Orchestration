@@ -75,7 +75,7 @@ class PackageTests(unittest.TestCase):
                 if file.is_file():
                     data = file.read_bytes(); total += len(data)
                     self.assertLessEqual(len(data), 1024*1024)
-                    self.assertNotIn(b'/Users/ej', data)
+                    self.assertNotIn(b'/Users/', data)
         self.assertLess(total, 1024*1024)
 
     def test_catalog_checker_accepts_valid_and_rejects_broken_integration(self):
@@ -83,7 +83,7 @@ class PackageTests(unittest.TestCase):
             root = Path(scratch)
             shutil.copytree(PACKAGE, root/'plugins/codex-orchestration', ignore=shutil.ignore_patterns('__pycache__'))
             file = root/'.agents/plugins/marketplace.json'; file.parent.mkdir(parents=True)
-            catalog = {'name':'codex-orchestration', 'plugins':[{'name':'codex-orchestration','source':{'source':'local','path':'./plugins/codex-orchestration'},'policy':{'installation':'AVAILABLE','authentication':'ON_INSTALL'},'category':'Productivity','version':'0.2.0'}]}
+            catalog = {'name':'codex-orchestration', 'plugins':[{'name':'codex-orchestration','source':{'source':'local','path':'./plugins/codex-orchestration'},'policy':{'installation':'AVAILABLE','authentication':'ON_INSTALL'},'category':'Productivity','version':'0.2.1'}]}
             file.write_text(json.dumps(catalog)); catalog_check.check(root)
             catalog['plugins'][0]['source']['path']='./missing'
             file.write_text(json.dumps(catalog))
@@ -92,7 +92,7 @@ class PackageTests(unittest.TestCase):
             catalog['plugins'][0]['version']='9.9.9'
             file.write_text(json.dumps(catalog))
             with self.assertRaises(AssertionError): catalog_check.check(root)
-            catalog['plugins'][0]['version']='0.2.0'
+            catalog['plugins'][0]['version']='0.2.1'
             catalog['plugins'].append(catalog['plugins'][0])
             file.write_text(json.dumps(catalog))
             with self.assertRaises(AssertionError): catalog_check.check(root)

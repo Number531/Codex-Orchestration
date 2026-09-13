@@ -45,7 +45,11 @@ Choose one catalog source. If that catalog is already registered, inspect `codex
 | Package directory | `plugins/codex-orchestration/` |
 | Native catalog | `.agents/plugins/marketplace.json` |
 
-Version `0.2.0` aligns the plugin, skills and project markers with this repository's community branding. Existing `0.1.0` installations need the [manual migration steps](plugins/codex-orchestration/docs/operations.md#migrate-from-010). The generic role names, model pins and default-off behavior are unchanged. This repository contains no sibling plugins from the original multi-plugin repository.
+Version `0.2.0` aligned the plugin, skills and project markers with this repository's community branding. Existing `0.1.0` installations need the [manual migration steps](plugins/codex-orchestration/docs/operations.md#migrate-from-010). The generic role names, model pins and default-off behavior are unchanged. This repository contains no sibling plugins from the original multi-plugin repository.
+
+## Reviewed versions
+
+For a reproducible install, choose a reviewed tag from [Releases](https://github.com/Number531/Codex-Orchestration/releases) and add `--ref <release-tag>` to the marketplace-add command above. Replace the placeholder with the actual published tag; use one catalog source. Review the [upgrade and rollback procedure](plugins/codex-orchestration/docs/operations.md#upgrade-a-project) before changing an existing installation. Maintainers use the [release procedure](docs/releasing.md).
 
 ## Development checks
 
@@ -54,6 +58,7 @@ From the repository root, with Python 3.11+ and Git:
 ```sh
 python3 -B -m unittest discover -s plugins/codex-orchestration/test -p 'test_*.py'
 python3 -B plugins/codex-orchestration/test/check_catalog.py
+python3 -B plugins/codex-orchestration/test/check_docs.py
 ```
 
 These checks use synthetic local fixtures and run in [GitHub Actions](.github/workflows/validate.yml). CI does not run paid models or native Codex sessions. Native engine checks, Desktop installation/trust, and live model access are separate validation surfaces; see the [compatibility guide](plugins/codex-orchestration/docs/validation.md).

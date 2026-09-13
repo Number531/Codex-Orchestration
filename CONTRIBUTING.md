@@ -9,12 +9,13 @@ Use Python 3.11+ and Git. No Python packages are needed for the deterministic te
 ```sh
 python3 -B -m unittest discover -s plugins/codex-orchestration/test -p 'test_*.py'
 python3 -B plugins/codex-orchestration/test/check_catalog.py
+python3 -B plugins/codex-orchestration/test/check_docs.py
 git diff --check
 ```
 
 Read [validation and compatibility](plugins/codex-orchestration/docs/validation.md) before running native or live checks. Do not automatically invoke paid services, change global trust, install the plugin for someone else, or update their real project as part of a test.
 
-GitHub Actions runs the deterministic unit and catalog checks on pushes and pull requests using Python 3.11. Its token has read-only repository access, checkout does not persist credentials, and action dependencies are pinned. Native/live checks remain opt-in; a green CI run does not qualify a desktop client.
+GitHub Actions runs the deterministic unit, catalog and documentation checks on pushes and pull requests using Python 3.11. The offline documentation check covers tracked Markdown inline local links, ATX heading anchors, and JSON/TOML fenced examples; external URLs and shell commands require separate review. Its token has read-only repository access, checkout does not persist credentials, and action dependencies are pinned. Native/live checks remain opt-in; a green CI run does not qualify a desktop client.
 
 ## Changes and pull requests
 
@@ -31,6 +32,8 @@ Avoid adding a workflow framework, automatic updater, account-wide control claim
 Use an issue in this repository for a non-sensitive bug or documentation problem. Include OS, package/client versions, the failing command, expected/observed behavior and a minimal sanitized reproduction. Do not attach full user configuration, prompts or logs containing secrets. Security-sensitive details belong in a private report.
 
 ## Release preparation
+
+Follow the [versioned release and rollback procedure](docs/releasing.md). Changes to `main` require a pull request, the passing `contracts` check and resolved review conversations. Force-pushes and branch deletion are blocked. Zero required GitHub approvals accommodates a solo maintainer; retain an independent review before merging.
 
 Before a public launch:
 
